@@ -1,22 +1,13 @@
 package Controller;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.ObjectOutputStream;
 import java.util.Collection;
-import java.util.Scanner;
-
 import Utils.Serialiser;
 import asg.cliche.Command;
 import asg.cliche.Param;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-
 import Controller.MovieRecommenderAPI;
 import Model.Movie;
 import Model.User;
-import Utils.Serialiser;
 import Utils.XMLSerializer;
 
 public class Main {
@@ -37,7 +28,10 @@ public class Main {
 	 movieRecommender.prime();
 	 } 
 	}
-	
+	public static void main( String [] args) throws Exception {
+
+	}
+		
 	@Command(description = "Add a new User")
 	public void createUser(@Param(name = "First Name") String firstName,
 		@Param(name= "Last Name") String lastName,
