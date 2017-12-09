@@ -13,13 +13,13 @@ public class Movie {
     
 	public Long movieId;
 	public String title;
-	public int year;
+	public String year;
 	public String URL;
 	
 	public List<Rating> ratings = new ArrayList<Rating>();
 	
 	// Creating a constructor for movies
-	public Movie(String title, int year, String URL) {
+	public Movie(String title, String year, String URL) {
 		this.movieId = counter++;
 		this.title = title;
 		this.year = year;

@@ -1,95 +1,82 @@
 package Utils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-import Controller.MovieRecommenderAPI;
+import edu.princeton.cs.introcs.In;
 import Model.Movie;
 import Model.Rating;
 import Model.User;
 
 public class CSVLoader {
-	
-	public List<User> parseUsers(String datastores) throws Exception {
-	File datastore = new File("datastore.xml");
-	Serialiser serialiser = new XMLSerializer(datastore);
-	MovieRecommenderAPI movieRecommenderAPI = new MovieRecommenderAPI(serialiser);
-	if(datastore.isFile()) 
-	{
-		movieRecommenderAPI.load();
-	}
-	
-	String delims = "[|]";
-	List <User> users = new ArrayList<User>();
-    Scanner sc = new Scanner(new File("moviedata_small/users5.dat"));
-    while (sc.hasNextLine()) {
-        String userDetails = sc.nextLine();
-        // parse user details string
-        String[] userTokens = userDetails.split(delims);
-        String convertString = userTokens[3];
-        int age = Integer.parseInt(convertString);
+	public List<User> parseUsers(String filename) throws Exception {
+		In inUsers = new In(filename);
 
-        movieRecommenderAPI.addUser(userTokens[1], userTokens[2], age, userTokens[4], userTokens[5]);
-    }
-    return users;
-}
-
-	public List<Movie> parseMovies(String datastores) throws Exception {
-		File datastore = new File("datastore.xml");
-		Serialiser serialiser = new XMLSerializer(datastore);
-		MovieRecommenderAPI movieRecommenderAPI = new MovieRecommenderAPI(serialiser);
-		if(datastore.isFile()) 
-		{
-			movieRecommenderAPI.load();
-		}
-		
 		String delims = "[|]";
-		List <Movie> movies = new ArrayList<Movie>();
-	    Scanner sc = new Scanner(new File("moviedata_small/items5.dat"));
-	    while (sc.hasNextLine()) {
-	        String movieDetails = sc.nextLine();
-	        // parse user details string
-	        String[] movieTokens = movieDetails.split(delims);
-	        String convertString = movieTokens[2];
-	        int year = Integer.parseInt(convertString);
+		List<User> users = new ArrayList<User>();
+		while (!inUsers.isEmpty()) {
+			String userDetails = inUsers.readLine();
+			String[] ratingTokens = userDetails.split(delims);
+			if (ratingTokens.length == 7) {
+				String firstName = ratingTokens[1];
+				String lastName = ratingTokens[2];
+				int age = Integer.valueOf(ratingTokens[3]);
+				String gender = ratingTokens[4];
+				String occupation = ratingTokens[5];
+				String userName= "";
+				String password= "";
 
-	        movieRecommenderAPI.addMovie(movieTokens[1], year, movieTokens[3]);
-	        
-	    }
-	    return movies;
-	    
-	}
-	
-	public List<Rating> parseRatings(String datastores) throws Exception {
-		File datastore = new File("datastore.xml");
-		Serialiser serialiser = new XMLSerializer(datastore);
-		MovieRecommenderAPI movieRecommenderAPI = new MovieRecommenderAPI(serialiser);
-		if(datastore.isFile()) 
-		{
-			movieRecommenderAPI.load();
+				users.add(new User(firstName, lastName, age, gender,occupation, userName, password));
+			} else {
+				throw new Exception("Invalid member length: "
+						+ ratingTokens.length);
+			}
 		}
-		
-		String delims = "[|]";
-		List <Rating> ratings = new ArrayList<Rating>();
-	    Scanner sc = new Scanner(new File("moviedata_small/ratings5.dat"));
-	    while (sc.hasNextLine()) {
-	        String ratingDetails = sc.nextLine();
-	        // parse user details string
-	        String[] ratingTokens = ratingDetails.split(delims);
-	        String convertString = ratingTokens[3];
-	        int ratingValue = Integer.parseInt(convertString);
-	        String convertString2 = ratingTokens[1];
-	        Long userID = Long.parseLong(convertString2);
-	        String convertString3 = ratingTokens[2];
-	        Long movieID = Long.parseLong(convertString3);
+		return users;
+	}
 
-	        movieRecommenderAPI.addRating(userID, movieID, ratingValue);
-	        
-	    }
-	    sc.close();
-	    
-	    return ratings;   
+	public List<Rating> parseRatings(String filename) throws Exception {
+		In inRatings = new In(filename);
+
+		String delims = "[|]";
+		List<Rating> ratings = new ArrayList<Rating>();
+		while (!inRatings.isEmpty()) {
+			String ratingDetails = inRatings.readLine();
+			String[] ratingTokens = ratingDetails.split(delims);
+			if (ratingTokens.length == 4) {
+				Long userId = Long.valueOf(ratingTokens[0]);
+				Long movieId = Long.valueOf(ratingTokens[1]);
+				int ratingValue = Integer.valueOf(ratingTokens[2]);
+
+				ratings.add(new Rating(userId, movieId, ratingValue));
+			} else {
+				throw new Exception("Invalid member length: "
+						+ ratingTokens.length);
+			}
+		}
+		return ratings;
+	}
+
+	public List<Movie> parseMovies(String filename) throws Exception {
+		In inMovies = new In(filename);
+
+		String delims = "[|]";
+		List<Movie> movies = new ArrayList<Movie>();
+		while (!inMovies.isEmpty()) {
+			String movieDetails = inMovies.readLine();
+			String[] movieTokens = movieDetails.split(delims);
+			// only parsing in the first four fields
+			if (movieTokens.length == 23) {
+				String title = movieTokens[1];
+				String year = movieTokens[2];
+				String url = movieTokens[3];
+
+				movies.add(new Movie(title, year, url));
+			} else {
+				throw new Exception("Invalid member length: "
+						+ movieTokens.length);
+			}
+		}
+		return movies;
 	}
 }

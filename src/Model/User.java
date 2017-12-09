@@ -2,8 +2,8 @@ package Model;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.common.base.Objects;
 
@@ -16,12 +16,20 @@ public class User {
 	public int age;
 	public String gender;
 	public String occupation;
+	public String role;
+	public String userName;
+	public String password;
 	
 	// Had to change the java.awt to java.util because i was getting an error 
-	public List<Rating> ratings = new ArrayList<Rating>();
+	public Map<Long, Rating> ratings = new HashMap<>();
 	 
+	public User(String firstName, String lastName, int age, String gender, String occupation, String userName, String password)
+	  {
+	    this(firstName,lastName, age, gender, occupation, userName, password, "default");
+	  }
+	
 	//Constructor for the users
-	 public User(String firstName, String lastName, int age, String gender, String occupation)
+	 public User(String firstName, String lastName, int age, String gender, String occupation, String userName, String password, String role)
 	  {
 		this.userId 		=counter++ ;
 	    this.firstName = firstName;
@@ -29,6 +37,9 @@ public class User {
 	    this.age = age;
 	    this.gender = gender;
 	    this.occupation = occupation;
+	    this.userName = userName;
+	    this.password = password;
+	    this.role = role;
 	  }
 	 
 	 public Long getUserId() {
