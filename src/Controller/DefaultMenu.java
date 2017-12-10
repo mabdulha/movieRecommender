@@ -3,7 +3,6 @@ package Controller;
 import java.util.Collection;
 
 import asg.cliche.Command;
-import asg.cliche.Param;
 import Model.Movie;
 import Model.User;
 
@@ -16,7 +15,7 @@ public class DefaultMenu {
 	{
 		this.movieRecommender = movieRecommender;
 		this.setName(user.firstName);
-		this.setUser(user);
+		this.user = user;
 	}
 	
 	@Command(description = "Display Users")
@@ -31,14 +30,6 @@ public class DefaultMenu {
 		System.out.println(movies);
 	}
 	
-	@Command(description="add a rating")
-	public void addRating(
-			@Param(name="user") Long UserID,
-			@Param(name="movie") Long MovieID,
-			@Param(name="rating") int rating){
-		movieRecommender.addRating(UserID, MovieID, rating);
-	}
-	
 	public String getName() 
 	{
 		return name;
@@ -48,9 +39,4 @@ public class DefaultMenu {
 	{
 		this.name = name;
 	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 }

@@ -25,9 +25,10 @@ public class AdminMenu {
 		@Param(name= "Gender") String gender,
 		@Param(name= "Occupation") String occupation,
 		@Param(name="UserName") String userName,
-		@Param(name="Password") String password) 
+		@Param(name="Password") String password,
+		@Param(name="role") String role) 
 	{
-		movieRecommender.addUser(firstName, lastName, age, gender, occupation, userName, password);
+		movieRecommender.addUser(firstName, lastName, age, gender, occupation, userName, password, role);
 	}
 	
 	@Command(description = "Display Users")
@@ -44,7 +45,8 @@ public class AdminMenu {
 	
 	
 	@Command(description = "Add Movie")
-	public void addMovie(@Param(name = "title") String title,
+	public void addMovie(
+		@Param(name = "title") String title,
 		@Param(name = "year") String year, 
 		@Param(name = "url") String url) {
 		movieRecommender.addMovie(title, year, url);
@@ -57,18 +59,28 @@ public class AdminMenu {
 	}
 	
 	@Command(description = "Delete a Movie")
-	public void deleteMovie(@Param(name = "Movie Id") Long movieId) {
+	public void deleteMovie(
+			@Param(name = "Movie Id") Long movieId) {
 		Movie movie = movieRecommender.getMovie(movieId);
 		movieRecommender.removeMovie(movie);
 	}
-	  
+	
+	@Command(description="Search Movie")
+	  public void searchMovie(@Param(name="title") String title)
+	  {
+		 Movie movie = movieRecommender.getMoviesByTitle(title);
+		 if(movie != null) {
+			 System.out.println(movie);
+		 } 
+	  }
+
 	  @Command(description="Add Rating")
 		public void addRating(
-				@Param(name="user") Long UserID,
-				@Param(name="movie") Long MovieID,
+				@Param(name="user") Long userId,
+				@Param(name="movie") Long movieId,
 				@Param(name="rating") int rating)
 	  {
-			movieRecommender.addRating(UserID, MovieID, rating);
+			movieRecommender.addRating(userId, movieId, rating);
 		}
 		
 		@Command(description="Get User Ratings")

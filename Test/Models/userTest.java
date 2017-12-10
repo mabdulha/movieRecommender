@@ -1,6 +1,10 @@
 package Models;
 
+import static Models.fixtures.users;
 import static org.junit.Assert.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -8,7 +12,7 @@ import Model.User;
 
 public class userTest {
 	
-	User homer = new User("homer", "simpson", 25, "Male", "House Husband");
+	User homer = new User("homer", "simpson", 25, "Male", "House Husband", "homer", "secret");
 	
 	@Test
 	public void testCreate() {
@@ -20,6 +24,17 @@ public class userTest {
 	}
 	
 	@Test
+	  public void testIds()
+	  {
+	    Set<Long> ids = new HashSet<>();
+	    for (User user : users)
+	    {
+	      ids.add(user.userId);
+	    }
+	    assertEquals (users.length, ids.size());
+	  }
+	
+	@Test
 	public void testToString()
 	  {
 	    assertEquals ("User{" + homer.userId + ", homer, simpson, 25, Male, House Husband}", homer.toString());
@@ -27,13 +42,12 @@ public class userTest {
 	
 	@Test
 	  public void testEquals()
-	  {
-	    User homer2 = new User ("homer", "simpson", 25, "Male", "House Husband"); 
-	    User bart   = new User ("bart", "simpson", 10, "Male", "Student"); 
+	  { 
+	    User bart   = new User ("bart", "simpson", 10, "Male", "Student", "bart", "secret"); 
 
 	    assertEquals(homer, homer);
 	    assertSame(homer, homer);
-	    assertNotSame(homer, homer2);
+	    assertNotSame(homer, bart);
 	    assertNotEquals(homer, bart);
 	  }
 }

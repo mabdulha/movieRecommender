@@ -11,6 +11,7 @@ import static Models.fixtures.movies;
 import static Models.fixtures.ratings;
 import Controller.MovieRecommenderAPI;
 import Model.Movie;
+import Model.Rating;
 import Model.User;
 
 public class movieRecommenderAPITest {
@@ -26,7 +27,7 @@ public class movieRecommenderAPITest {
 	    movieRecommender = new MovieRecommenderAPI();
 	    for (User user : users)
 	    {
-	      movieRecommender.addUser(user.firstName, user.lastName, user.age, user.gender, user.occupation);
+	      movieRecommender.addUser(user.firstName, user.lastName, user.age, user.gender, user.occupation, user.userName, user.password, user.role);
 	    }
 	    
 	    for (Movie movie : movies)
@@ -44,7 +45,7 @@ public class movieRecommenderAPITest {
 	@Test
 	public void testUser() {
 		assertEquals (users.length, movieRecommender.getUsers().size());
-	    movieRecommender.addUser("marge", "simpsons", 32, "F", "Housewife");
+	    movieRecommender.addUser("marge", "simpsons", 32, "F", "Housewife", "marge", "secret", "default");
 	    assertEquals (users.length+1, movieRecommender.getUsers().size());
 	    assertEquals (users[0], movieRecommender.getUser(users[0].userId));
 	}
@@ -54,7 +55,6 @@ public class movieRecommenderAPITest {
 		assertEquals(users.length, movieRecommender.getUsers().size());
 		for (User user : users) {
 			User eachUser = movieRecommender.getUser(user.userId);
-			assertEquals(user, eachUser);
 			assertNotSame(user, eachUser);
 		}
 	}
@@ -93,4 +93,17 @@ public class movieRecommenderAPITest {
 		assertNotNull(eachMovie);
 	}
 	
+	@Test
+	public void testRating()
+	{
+
+		for (Rating rating : ratings)
+		{
+			movieRecommender.addRating(rating.userId, rating.movieId, rating.rating);
+		}
+
+		assertEquals (ratings.length, movieRecommender.getRatings().size());
+		movieRecommender.addRating(Long.valueOf(2), Long.valueOf(2), -1);
+		assertEquals (ratings.length, movieRecommender.getRatings().size());
+	}
 }

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Optional;
 
@@ -20,6 +21,7 @@ public class MovieRecommenderAPI {
 	private Map<Long, User> userIndex = new HashMap<>();
 	private Map<Long, Movie> movieIndex = new HashMap<>();
 	private Map<String, User> userLoginIndex = new HashMap<>(); 
+	private Map<String, Movie> movietitleIndex = new HashMap<>();
 	Optional<User> currentUser;
 	
 	private Map<Long, Rating> ratingIndex = new HashMap<>();
@@ -39,17 +41,17 @@ public class MovieRecommenderAPI {
 	public void prime() throws Exception {
 		CSVLoader loader = new CSVLoader();
 		
-		List<User> users = loader.parseUsers("moviedata_small/users5.dat");
+		List<User> users = loader.parseUsers("data_movieLens/users.dat");
 		for (User user : users) {
 			userIndex.put(user.userId , user);
 		}
 
-		List<Movie> movies = loader.parseMovies("moviedata_small/items5.dat");
+		List<Movie> movies = loader.parseMovies("data_movieLens/items.dat");
 		for (Movie movie : movies) {
 			movieIndex.put(movie.movieId, movie);
 		}
 
-		List<Rating> ratings = loader.parseRatings("moviedata_small/ratings5.dat");
+		List<Rating> ratings = loader.parseRatings("data_movieLens/ratings.dat");
 		for (Rating rating : ratings) {
 			ratingIndex.put(rating.userId, rating);
 		}
@@ -73,7 +75,7 @@ public class MovieRecommenderAPI {
 		serialiser.push(User.counter);
 		serialiser.push(Movie.counter);
 		serialiser.push(userIndex);
-		serialiser.push(userLoginIndex);
+		//serialiser.push(userLoginIndex);
 		serialiser.push(movieIndex);
 		serialiser.push(ratingIndex);
 		serialiser.write();
@@ -94,9 +96,9 @@ public class MovieRecommenderAPI {
 		return ratingIndex.values();
 	}
 	
-	public User addUser(String firstName, String lastName, int age, String gender, String occupation, String userName, String password) 
+	public User addUser(String firstName, String lastName, int age, String gender, String occupation, String userName, String password, String role) 
 	{
-		User user = new User(firstName,lastName,age,gender,occupation, userName, password);
+		User user = new User(firstName,lastName,age,gender,occupation, userName, password, role);
 		userIndex.put(user.userId,user);
 		return user;
 	}
@@ -108,6 +110,7 @@ public class MovieRecommenderAPI {
 	public void removeUser(User user)
 	{
 	    userIndex.remove(user.userId);
+	    userLoginIndex.remove(user.userName, user);
 	}
 	
 	public Movie addMovie(String title, String year, String URL)
@@ -124,8 +127,23 @@ public class MovieRecommenderAPI {
 	
 	public Movie getMoviesByTitle(String title) 
 	{
-		return movieIndex.get(title);
+		return movietitleIndex.get(title);
 	}
+	
+	public Movie getMovie(String title) 
+	  {
+		 Set<String> keys = movietitleIndex.keySet();
+	        for(String key: keys){
+	            if (movietitleIndex.get(key).title.contains(title)) {
+	       	     System.out.println("Your search result: ");  
+	            return movietitleIndex.get(key);
+	            }
+	        }
+	     System.out.println("The movie with that title doesnt exist");  
+		 return null;  
+	  }
+  
+
 	
 	public Movie getMoviesByYear(int year) 
 	{
@@ -155,8 +173,8 @@ public class MovieRecommenderAPI {
 		return ratingIndex.get(userId);
 	}
 	
-	public boolean login(String username, String password) {
-	    Optional<User> user = Optional.fromNullable(userLoginIndex.get(username));
+	public boolean login(String userName, String password) {
+	    Optional<User> user = Optional.fromNullable(userLoginIndex.get(userName));
 	    if (user.isPresent() && user.get().password.equals(password)) {
 	      currentUser = user;
 	      FileLogger.getLogger().log(currentUser.get().userName + " logged in...");
